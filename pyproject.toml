@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "proxies"
+version = "0.1.0"
+description = ""
+authors = ["sny <127958265+kyofu95@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "^2.3.2"
+sqlalchemy = "^2.0.15"
+psycopg2 = "^2.9.6"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
