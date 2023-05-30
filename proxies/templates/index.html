@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Bootstrap-Flask Demo Application</h1>
+<p>This demo uses Bootstrap version 5.</p>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class="flashes list-group">
+    {% for message in messages %}
+    <li class="list-group-item">
+        <div class="alert alert-success">{{message}}</div>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+<ul>
+    <li>a</li>
+    <li>b</li>
+</ul>
+{% endblock %}
