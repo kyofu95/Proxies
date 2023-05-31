@@ -37,7 +37,7 @@ class TheSpeedXProxySource(BaseGithubProxySource):
     def get_proxies(self) -> List[Proxy] | None:
         """Get a list of proxies from the source."""
 
-        proxies = [Proxy]
+        proxies = []
 
         for proxy_type in self.PROTOCOL_LIST:
             proxies_url = self.base_url + proxy_type[1]
@@ -66,7 +66,7 @@ class JetkaiProxySource(BaseGithubProxySource):
     def get_proxies(self) -> List[Proxy] | None:
         """Get a list of proxies from the source."""
 
-        proxies = [Proxy]
+        proxies = []
 
         response = self.make_request(self.base_url)
 
