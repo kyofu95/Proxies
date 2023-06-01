@@ -18,6 +18,7 @@ class MaxmindLiteDb2Geolocation(IBaseGeolocation):
                 return address
 
             address.city = response.city.name
+            address.region = response.subdivisions.most_specific.name
             address.country = response.country.name
 
             return address
