@@ -5,6 +5,8 @@ from proxies.service.proxy import Proxy
 
 
 class IBaseGeolocation(ABC):
+    """Abstract base class for geolocation implementations."""
+
     @abstractmethod
     def get_address(self, proxy: Proxy) -> Address:
         raise NotImplementedError
