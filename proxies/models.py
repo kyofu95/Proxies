@@ -4,25 +4,7 @@ import enum
 from sqlalchemy.dialects.postgresql import INET
 
 from proxies.core.database import db
-
-
-class SQLProxyProtocol(enum.Enum):
-    """
-    Represents different proxy protocols.
-
-    This enumeration defines the supported proxy protocols:
-    - UNKNOWN: Unknown proxy protocol
-    - SOCKS4: SOCKS version 4
-    - SOCKS5: SOCKS version 5
-    - HTTP: HTTP proxy
-    - HTTPS: HTTPS proxy
-    """
-
-    UNKNOWN = 0
-    SOCKS4 = 1
-    SOCKS5 = 2
-    HTTP = 3
-    HTTPS = 4
+from proxies.service.proxy import ProxyProtocol
 
 
 class Proxy(db.Model):
@@ -35,8 +17,7 @@ class Proxy(db.Model):
     ip_address = db.Column(INET, nullable=False)
     ip_port = db.Column(db.Integer, nullable=False)
     protocol = db.Column(
-        db.Enum(SQLProxyProtocol, values_callable=lambda obj: [e.name for e in obj]),
-        default=SQLProxyProtocol.UNKNOWN,
+        db.Enum(ProxyProtocol, values_callable=lambda obj: [e.name for e in obj]),
         nullable=False,
     )
     login = db.Column(db.String(100))
@@ -58,6 +39,7 @@ class Address(db.Model):
     """Address database model represents a location with its associated country, region, and city."""
 
     __tablename__ = "address"
+    __table_args__ = (db.UniqueConstraint("country", "region", "city"),)
 
     id = db.Column(db.Integer, primary_key=True)
     country = db.Column(db.String(100))
@@ -71,7 +53,7 @@ class Health(db.Model):
     __tablename__ = "health"
 
     id = db.Column(db.Integer, primary_key=True)
-    connections = db.Column(db.Integer, default=0)
-    failed_connections = db.Column(db.Integer, default=0)
+    connections = db.Column(db.Integer, default=0, nullable=False)
+    failed_connections = db.Column(db.Integer, default=0, nullable=False)
 
-    last_tested = db.Column(db.DateTime, default=datetime.utcnow)
+    last_tested = db.Column(db.DateTime)
