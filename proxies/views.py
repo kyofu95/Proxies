@@ -66,7 +66,7 @@ def filtered_data():
     return jsonify(items)
 
 
-@bp.route("/", methods=["GET", "POST"])
+@bp.route("/", methods=["GET"])
 def index():
     """Renders the index.html template with a list of proxy servers."""
 
