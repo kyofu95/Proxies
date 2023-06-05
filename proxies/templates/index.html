@@ -3,6 +3,26 @@
 {% block content %}
 <h1>Ryaaa</h1>
 
+<form method="POST" action="/">
+    <div class="container">
+        <p>Country</p>
+        <select class="form-select" id="country-select">
+            <option value="" selected disabled hidden>Select country</option>
+            {% for country in countries %}
+                <option value={{country}}>{{country}}</option>
+            {% endfor %}
+        </select>
+        <p>Protocol</p>
+        <select class="form-select" id="protocol-select">
+            <option value="" selected disabled hidden>Select protocol</option>
+            <option value="1">SOCKS4</option>
+            <option value="2">SOCKS5</option>
+            <option value="3">HTTP</option>
+            <option value="4">HTTPS</option>
+        </select>
+    </div>
+</form>
+
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 <ul class="flashes list-group">
@@ -27,7 +47,7 @@
                 <th scope="col">Last update</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="table-body">
             {%for item in items%}
             <tr>
                 <td>{{item.address}}</td>
@@ -41,5 +61,45 @@
         </tbody>
     </table>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script>
+    function updateTable(filteredItems) {
+        var tableBody = $("#table-body");
+        tableBody.empty();
+        for (var i = 0; i < filteredItems.length; i++) {
+            var item = filteredItems[i];
+            var row = $("<tr></tr>");
+            row.append($("<td></td>").text(item.address));
+            row.append($("<td></td>").text(item.port));
+            row.append($("<td></td>").text(item.protocol));
+            row.append($("<td></td>").text(item.country));
+            row.append($("<td></td>").text(item.response));
+            row.append($("<td></td>").text(item.last_update));
+            tableBody.append(row);
+        }
+    }
+
+    // Add this function to handle both select elements
+    function fetchData() {
+        var selectedCountry = $("#country-select").val();
+        var selectedProtocol = $("#protocol-select").val();
+        $.ajax({
+            url: "/filtered_data",
+            type: "POST",
+            data: { country: selectedCountry, protocol: selectedProtocol },
+            success: function (filteredItems) {
+                updateTable(filteredItems);
+            },
+            error: function () {
+                console.error("Error fetching filtered data.");
+            }
+        });
+    }
+
+    // Update event listeners for both select elements
+    $("#country-select").on("change", fetchData);
+    $("#protocol-select").on("change", fetchData);
+</script>
 
 {% endblock %}
