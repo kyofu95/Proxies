@@ -3,13 +3,13 @@
 {% block content %}
 <h1>Ryaaa</h1>
 
-<form method="POST" action="/">
+<form method="POST" action="/" id="filter-form">
     <div class="container">
         <p>Country</p>
         <select class="form-select" id="country-select">
             <option value="" selected disabled hidden>Select country</option>
             {% for country in countries %}
-                <option value={{country}}>{{country}}</option>
+            <option value={{country}}>{{country}}</option>
             {% endfor %}
         </select>
         <p>Protocol</p>
@@ -82,17 +82,25 @@
 
     // Add this function to handle both select elements
     function fetchData() {
-        var selectedCountry = $("#country-select").val();
-        var selectedProtocol = $("#protocol-select").val();
+        var selectedCountry = $("#country-select").val() || "";
+        var selectedProtocol = $("#protocol-select").val() || "";
+
+        // Get the CSRF token from the template
+        var csrfToken = "{{ csrf_token }}";
+
         $.ajax({
             url: "/filtered_data",
             type: "POST",
-            data: { country: selectedCountry, protocol: selectedProtocol },
+            data: {
+                country: selectedCountry,
+                protocol: selectedProtocol,
+                csrf_token: csrfToken
+            },
             success: function (filteredItems) {
                 updateTable(filteredItems);
             },
-            error: function () {
-                console.error("Error fetching filtered data.");
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("Error fetching filtered data:", errorThrown);
             }
         });
     }
