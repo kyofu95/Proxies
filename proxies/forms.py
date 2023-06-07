@@ -4,5 +4,7 @@ from wtforms.validators import Optional
 
 
 class FilterForm(FlaskForm):
-    country = StringField("Country", validators=[Optional()])
+    """A WTF form for filtering data based on country and protocol."""
+
+    country = StringField("Country", validators=[Optional(strip_whitespace=False)])
     protocol = StringField("Protocol", validators=[Optional()])

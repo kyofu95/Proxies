@@ -13,7 +13,7 @@ from proxies.forms import FilterForm
 bp = Blueprint("index", __name__, "templates/")
 
 
-def td_format(td_object: timedelta) -> str:
+def timedelta_format(td_object: timedelta) -> str:
     """
     Convert a timedelta object to a string representing the duration
     in years, months, days, hours, minutes, and seconds.
@@ -40,44 +40,54 @@ def td_format(td_object: timedelta) -> str:
 
 
 def proxy_format(proxy: Proxy) -> Dict[str, Any]:
+    """Format the given proxy object into a dictionary."""
+
     return {
         "address": str(proxy.ip_address),
         "port": proxy.ip_port,
         "country": proxy.address.country,
         "protocol": proxy.protocol.name,
         "response": proxy.latency // 1000,
-        "last_update": td_format(datetime.utcnow() - proxy.health.last_tested),
+        "last_update": timedelta_format(datetime.utcnow() - proxy.health.last_tested),
     }
 
 
 @bp.route("/filtered_data", methods=["POST"])
 def filtered_data():
+    """Route to filter ProxyDB table based on country and protocol, if provided."""
+
+    # Get CSRF token from the form data and try to validate it
     csrf_token = request.form.get("csrf_token")
     try:
         validate_csrf(csrf_token)
     except ValidationError:
         return jsonify({"error": "Invalid CSRF token"}), 400
 
+    # Create a FilterForm instance with the form data and validate it
     form = FilterForm(request.form)
     if form.validate():
         country = request.form.get("country")
         protocol = request.form.get("protocol")
 
-        statement = db.select(DB_Proxy).join(DB_Proxy.address).join(DB_Proxy.health)
+        filters = []
         if country:
-            statement = statement.filter(DB_Address.country == country)
+            filters.append(DB_Address.country == country)
         if protocol:
-            protocol = ProxyProtocol(int(protocol))
-            statement = statement.filter(DB_Proxy.protocol == protocol)
+            filters.append(DB_Proxy.protocol == ProxyProtocol(int(protocol)))
 
-        statement = statement.order_by(DB_Health.last_tested.desc()).limit(50)
+        statement = (
+            db.select(DB_Proxy)
+            .join(DB_Proxy.address)
+            .join(DB_Proxy.health)
+            .filter(*filters)
+            .order_by(DB_Health.last_tested.desc())
+            .limit(50)
+        )
 
         db_proxies = db.session.execute(statement).scalars().all()
 
-        items = []
-        for proxy in db_proxies:
-            proxy_dict = proxy_format(proxy)
-            items.append(proxy_dict)
+        # Convert the filtered results into a list of dictionaries
+        items = [proxy_format(proxy) for proxy in db_proxies]
 
         return jsonify(items)
     return jsonify({"error": "Invalid input data"}), 400
@@ -102,14 +112,8 @@ def index():
         .all()
     )
 
-    countries = []
-    for country in db_coutries:
-        country_name = country[0]
-        countries.append(country_name)
+    countries = [country[0] for country in db_coutries]
 
-    items = []
-    for proxy in db_proxies:
-        proxy_dict = proxy_format(proxy)
-        items.append(proxy_dict)
+    items = [proxy_format(proxy) for proxy in db_proxies]
 
     return render_template("index.html", countries=countries, items=items, form=form, csrf_token=token)
