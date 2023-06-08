@@ -5,9 +5,8 @@ from flask import Blueprint, render_template, request, jsonify
 from flask_wtf.csrf import validate_csrf, generate_csrf
 from wtforms.validators import ValidationError
 
-from proxies.models import Proxy as DB_Proxy, Health as DB_Health, Address as DB_Address
-from proxies.core.database import db
-from proxies.service.proxy import ProxyProtocol, Proxy
+from proxies.models import Proxy as DB_Proxy, Address as DB_Address
+from proxies.service.proxy import ProxyProtocol
 from proxies.forms import FilterForm
 
 bp = Blueprint("index", __name__, "templates/")
@@ -39,7 +38,7 @@ def timedelta_format(td_object: timedelta) -> str:
     return ", ".join(strings)
 
 
-def proxy_format(proxy: Proxy) -> Dict[str, Any]:
+def proxy_format(proxy: DB_Proxy) -> Dict[str, Any]:
     """Format the given proxy object into a dictionary."""
 
     return {
@@ -69,22 +68,10 @@ def filtered_data():
         country = request.form.get("country")
         protocol = request.form.get("protocol")
 
-        filters = []
-        if country:
-            filters.append(DB_Address.country == country)
         if protocol:
-            filters.append(DB_Proxy.protocol == ProxyProtocol(int(protocol)))
+            protocol = ProxyProtocol(int(protocol))
 
-        statement = (
-            db.select(DB_Proxy)
-            .join(DB_Proxy.address)
-            .join(DB_Proxy.health)
-            .filter(*filters)
-            .order_by(DB_Health.last_tested.desc())
-            .limit(50)
-        )
-
-        db_proxies = db.session.execute(statement).scalars().all()
+        db_proxies = DB_Proxy.get_proxies_by_country_or_protocol(country, protocol, 50)
 
         # Convert the filtered results into a list of dictionaries
         items = [proxy_format(proxy) for proxy in db_proxies]
@@ -100,17 +87,9 @@ def index():
     form = FilterForm()
     token = generate_csrf()
 
-    db_proxies = (
-        db.session.execute(db.select(DB_Proxy).join(DB_Proxy.health).order_by(DB_Health.last_tested.desc()).limit(50))
-        .scalars()
-        .all()
-    )
+    db_proxies = DB_Proxy.get_newest_proxies(50)
 
-    db_coutries = (
-        db.session.execute(db.select(DB_Address.country).distinct().order_by(DB_Address.country.asc()))
-        .columns("country")
-        .all()
-    )
+    db_coutries = DB_Address.get_countries()
 
     countries = [country[0] for country in db_coutries]
 
