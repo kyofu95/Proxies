@@ -15,6 +15,7 @@ flask-migrate = "^4.0.4"
 requests = "^2.31.0"
 geoip2 = "^4.7.0"
 flask-wtf = "^1.1.1"
+apscheduler = "^3.10.1"
 
 
 [tool.poetry.group.dev.dependencies]
