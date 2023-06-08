@@ -9,4 +9,5 @@ class IBaseGeolocation(ABC):
 
     @abstractmethod
     def get_address(self, proxy: Proxy) -> Address:
+        """Get the address details for a given proxy."""
         raise NotImplementedError

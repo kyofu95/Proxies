@@ -18,7 +18,7 @@ class ProxyProtocol(Enum):
     HTTPS = 4
 
 
-@dataclass
+@dataclass(init=True, unsafe_hash=True)
 class Proxy:
     """A data class representing a proxy."""
 
@@ -27,3 +27,15 @@ class Proxy:
     protocol: ProxyProtocol
     login: Optional[str] = None
     password: Optional[str] = None
+
+    latency: Optional[int] = None
+
+    def get_uri(self) -> str:
+        """Returns a string representing a proxy URI."""
+
+        user_pass = ""
+        if self.login:
+            user_pass = f"{self.login}:{self.password}@"
+
+        protocol_name = self.protocol.name.lower()
+        return f"{protocol_name}://{user_pass}{self.ip_address}:{self.ip_port}"
