@@ -48,10 +48,15 @@ class Proxy(db.Model):
 
     @staticmethod
     def get_newest_proxies(limit: int = 500) -> List[Proxy]:
-        """Retrieve the newest proxies from the database based on the last time they were tested."""
+        """Retrieve the newest proxies from the database based on the last time they were tested and failed connections."""
 
         db_proxies = (
-            db.session.execute(db.select(Proxy).join(Proxy.health).order_by(Health.last_tested.desc()).limit(limit))
+            db.session.execute(
+                db.select(Proxy)
+                .join(Proxy.health)
+                .order_by(Health.last_tested.desc(), Health.failed_connections.asc())
+                .limit(limit)
+            )
             .scalars()
             .all()
         )
@@ -74,7 +79,7 @@ class Proxy(db.Model):
     ) -> List[Proxy]:
         """
         Retrieve a list of proxies that match the specified country and protocol
-        ordered by nearest time they were tested.
+        ordered by nearest time they were tested and failed connections.
         """
 
         filters = []
@@ -88,7 +93,7 @@ class Proxy(db.Model):
             .join(Proxy.address)
             .join(Proxy.health)
             .filter(*filters)
-            .order_by(Health.last_tested.desc())
+            .order_by(Health.last_tested.desc(), Health.failed_connections.asc())
             .limit(limit)
         )
         return db.session.execute(statement).scalars().all()
