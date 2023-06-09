@@ -20,6 +20,9 @@ if settings.ENVIRONMENT == "dev":
         datefmt="%Y-%m-%dT%H:%M:%S",
     )
 
+    # this line removes logging about EVERY proxy check
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 
 def create_app() -> Flask:
     app = Flask(__name__)

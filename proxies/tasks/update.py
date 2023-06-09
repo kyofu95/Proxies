@@ -2,12 +2,12 @@ from datetime import datetime
 from typing import List, Tuple
 import concurrent.futures
 
-import requests
-
 from proxies.core.database import db
 from proxies.core.scheduler import scheduler
 
 from proxies.models import Proxy as DB_Proxy
+
+from proxies.tasks.netwok_utils import is_proxy_active
 
 # This constant defines number of proxies per thread worker
 CHUNK_SIZE = 10
@@ -18,24 +18,11 @@ def check_proxies(proxies: List[DB_Proxy]) -> Tuple[DB_Proxy, bool]:
 
     checked_proxies = []
     for proxy in proxies:
-        failed = False
+        proxy_scheme = {proxy.protocol.name.lower(): proxy.get_uri()}
 
-        proxies = {proxy.protocol.name.lower(): proxy.get_uri()}
+        result = is_proxy_active("http://google.com", proxy_scheme, 5)
 
-        try:
-            response = requests.get("http://google.com", proxies=proxies, timeout=5)
-        except (
-            requests.exceptions.ProxyError,
-            requests.exceptions.Timeout,
-            requests.exceptions.ChunkedEncodingError,
-            requests.exceptions.ConnectionError,
-        ):
-            failed = True
-
-        if not failed and response.status_code not in [200, 429]:
-            failed = True
-
-        checked_proxies.append((proxy, failed))
+        checked_proxies.append((proxy, result.success))
     return checked_proxies
 
 

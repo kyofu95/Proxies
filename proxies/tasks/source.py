@@ -3,8 +3,6 @@ from ipaddress import ip_address
 import time
 from typing import List
 
-import requests
-
 from proxies.core.database import db
 from proxies.core.scheduler import scheduler
 
@@ -13,6 +11,8 @@ from proxies.models import Proxy as DB_Proxy, Address as DB_Address, Health as D
 from proxies.service.source.manager import proxy_source_manager
 from proxies.service.proxy import Proxy
 from proxies.service.geoip.maxmind import MaxmindLiteDb2Geolocation
+
+from proxies.tasks.netwok_utils import is_proxy_active
 
 # This constant defines number of proxies per thread worker
 CHUNK_SIZE = 10
@@ -23,20 +23,11 @@ def check_proxies(raw_proxies: List[Proxy]) -> List[Proxy]:
 
     checked_proxies = []
     for raw_proxy in raw_proxies:
-        proxies = {raw_proxy.protocol.name.lower(): raw_proxy.get_uri()}
+        proxy_scheme = {raw_proxy.protocol.name.lower(): raw_proxy.get_uri()}
 
-        try:
-            response = requests.get("http://google.com", proxies=proxies, timeout=5)
-        except (
-            requests.exceptions.ProxyError,
-            requests.exceptions.Timeout,
-            requests.exceptions.ChunkedEncodingError,
-        ):
-            continue
-
-        if response.ok or (response.status_code == 429 and response.reason == "Too Many Requests"):
-            raw_proxy.latency = response.elapsed.microseconds
-
+        result = is_proxy_active("http://google.com", proxy_scheme, 5)
+        if result.success:
+            raw_proxy.latency = result.latency
             checked_proxies.append(raw_proxy)
 
     return checked_proxies
@@ -111,5 +102,3 @@ def fetch_new_proxies() -> None:
                     time.sleep(5)
                 else:
                     store_proxies_in_db(future.result())
-
-        concurrent.futures.wait(futures)
