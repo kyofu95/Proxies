@@ -44,6 +44,9 @@ class TheSpeedXProxySource(BaseGithubProxySource):
 
             response = self.make_request(proxies_url)
 
+            if not response:
+                continue
+
             # Parse text contents
             for line in response.text.split("\n"):
                 address, port = line.split(":")

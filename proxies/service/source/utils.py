@@ -12,7 +12,7 @@ def parse_proxy(ip_adress: str, ip_port: str, protocol: ProxyProtocol) -> Proxy 
         return None
 
     # skip reserved adresses
-    if address.is_reserved:
+    if address.is_reserved or address.is_private:
         return None
 
     # check ip port
