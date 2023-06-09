@@ -1,3 +1,6 @@
+import logging
+from logging.handlers import RotatingFileHandler
+
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 
@@ -9,9 +12,20 @@ from proxies.views import bp as index_bp
 
 from proxies.tasks.tasks import register_tasks
 
+if settings.ENVIRONMENT == "dev":
+    logging.basicConfig(
+        handlers=[RotatingFileHandler("flask.log", maxBytes=100000, backupCount=10)],
+        level=logging.DEBUG,
+        format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
+        datefmt="%Y-%m-%dT%H:%M:%S",
+    )
+
 
 def create_app() -> Flask:
     app = Flask(__name__)
+
+    app.logger.info("App start")
+
     app.config["SQLALCHEMY_DATABASE_URI"] = settings.DATABASE_URI
     app.config["SECRET_KEY"] = settings.SECRET_KEY
 
@@ -23,6 +37,6 @@ def create_app() -> Flask:
 
     app.app_context().push()
 
-    register_tasks()
+    # register_tasks()
 
     return app
