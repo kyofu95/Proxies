@@ -36,7 +36,7 @@ def check_proxies(raw_proxies: List[Proxy]) -> List[Proxy]:
 
         if response.ok or (response.status_code == 429 and response.reason == "Too Many Requests"):
             raw_proxy.latency = response.elapsed.microseconds
-            # TODO: anonymity
+
             checked_proxies.append(raw_proxy)
 
     return checked_proxies
@@ -55,8 +55,6 @@ def store_proxies_in_db(cheched_proxies: List[Proxy]) -> None:
             ip_port=proxy.ip_port,
             protocol=proxy.protocol,
             latency=proxy.latency,
-            login=proxy.login,
-            password=proxy.password,
         )
 
         db_health = DB_Health(connections=1, failed_connections=0)

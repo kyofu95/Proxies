@@ -21,10 +21,7 @@ class Proxy(db.Model):
         db.Enum(ProxyProtocol, values_callable=lambda obj: [e.name for e in obj]),
         nullable=False,
     )
-    login = db.Column(db.String(100))
-    password = db.Column(db.String(100))
 
-    anonymity_level = db.Column(db.Integer)
     latency = db.Column(db.Integer)
 
     added = db.Column(db.DateTime, default=datetime.utcnow)
@@ -101,12 +98,8 @@ class Proxy(db.Model):
     def get_uri(self) -> str:
         """Returns a string representing a proxy URI."""
 
-        user_pass = ""
-        if self.login:
-            user_pass = f"{self.login}:{self.password}@"
-
         protocol_name = self.protocol.name.lower()
-        return f"{protocol_name}://{user_pass}{self.ip_address}:{self.ip_port}"
+        return f"{protocol_name}://{self.ip_address}:{self.ip_port}"
 
 
 class Address(db.Model):

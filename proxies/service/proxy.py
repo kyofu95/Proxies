@@ -25,17 +25,11 @@ class Proxy:
     ip_address: IPAddress
     ip_port: int
     protocol: ProxyProtocol
-    login: Optional[str] = None
-    password: Optional[str] = None
 
     latency: Optional[int] = None
 
     def get_uri(self) -> str:
         """Returns a string representing a proxy URI."""
 
-        user_pass = ""
-        if self.login:
-            user_pass = f"{self.login}:{self.password}@"
-
         protocol_name = self.protocol.name.lower()
-        return f"{protocol_name}://{user_pass}{self.ip_address}:{self.ip_port}"
+        return f"{protocol_name}://{self.ip_address}:{self.ip_port}"
