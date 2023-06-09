@@ -106,10 +106,10 @@ def fetch_new_proxies() -> None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
             futures = [executor.submit(check_proxies, chunk) for chunk in chunks]
 
-            for f in futures:
-                if not f.done():
+            for future in futures:
+                if not future.done():
                     time.sleep(5)
                 else:
-                    store_proxies_in_db(f.result())
+                    store_proxies_in_db(future.result())
 
         concurrent.futures.wait(futures)
