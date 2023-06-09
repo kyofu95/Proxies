@@ -136,12 +136,12 @@ class Address(db.Model):
     def get_countries() -> List[str]:
         """Return a list of distinct countries from the Address table."""
 
-        db_coutries = (
+        db_countries = (
             db.session.execute(db.select(Address.country).distinct().order_by(Address.country.asc()))
             .columns("country")
             .all()
         )
-        return db_coutries
+        return [country[0] for country in db_countries]
 
 
 class Health(db.Model):
