@@ -43,10 +43,10 @@ def update_oldest_proxies() -> None:
 
         checked_proxies = [proxy for future in futures for proxy in future.result()]
 
-        for proxy, failed in checked_proxies:
+        for proxy, success in checked_proxies:
             proxy.health.connections += 1
 
-            if failed:
+            if not success:
                 proxy.health.failed_connections += 1
 
             proxy.health.last_tested = datetime.utcnow()
