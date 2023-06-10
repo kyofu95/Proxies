@@ -1,7 +1,8 @@
+from datetime import timedelta
+
 import pytest
 
-from proxies.views import timedelta_format
-from datetime import timedelta
+from proxies.utils.format import timedelta_format
 
 
 def test_timedelta_format_years():

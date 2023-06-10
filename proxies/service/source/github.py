@@ -1,27 +1,13 @@
 from typing import List
-import requests
+import json
 
 from proxies.service.proxy import Proxy, ProxyProtocol
-from proxies.service.source.base import IBaseProxySource, ProxySourceError
+from proxies.service.source.base import IBaseProxySource
 from proxies.service.source.utils import parse_proxy
+from proxies.utils.network import make_request
 
 
-class BaseGithubProxySource(IBaseProxySource):
-    def make_request(self, uri: str) -> requests.Response:
-        try:
-            response = requests.get(uri, timeout=10)
-        except requests.exceptions.Timeout as exc:
-            raise ProxySourceError("Timeout!") from exc
-        except requests.exceptions.RequestException as exc:
-            raise ProxySourceError(str(exc)) from exc
-
-        if not response.ok:
-            raise ProxySourceError(f"Response status is {response.status_code}")
-
-        return response
-
-
-class TheSpeedXProxySource(BaseGithubProxySource):
+class TheSpeedXProxySource(IBaseProxySource):
     """
     A class representing TheSpeedX proxy source,
     which fetches proxies from https://github.com/TheSpeedX/PROXY-List.
@@ -42,13 +28,12 @@ class TheSpeedXProxySource(BaseGithubProxySource):
         for proxy_type in self.PROTOCOL_LIST:
             proxies_url = self.base_url + proxy_type[1]
 
-            response = self.make_request(proxies_url)
-
-            if not response:
+            text_response = make_request(proxies_url)
+            if not text_response:
                 continue
 
             # Parse text contents
-            for line in response.text.split("\n"):
+            for line in text_response.split("\n"):
                 address, port = line.split(":")
 
                 proxy = parse_proxy(address, port, proxy_type[0])
@@ -58,7 +43,7 @@ class TheSpeedXProxySource(BaseGithubProxySource):
         return proxies
 
 
-class JetkaiProxySource(BaseGithubProxySource):
+class JetkaiProxySource(IBaseProxySource):
     """
     A class representing jetkai proxy source,
     which fetches proxies from https://github.com/jetkai/proxy-list.
@@ -71,9 +56,11 @@ class JetkaiProxySource(BaseGithubProxySource):
 
         proxies = []
 
-        response = self.make_request(self.base_url)
+        text_response = make_request(self.base_url)
+        if not text_response:
+            return None
 
-        raw_proxy_list = response.json()
+        raw_proxy_list = json.loads(text_response)
         for raw_proxy in raw_proxy_list:
             raw_address = raw_proxy["ip"]
             for raw_protocol in raw_proxy["protocols"]:

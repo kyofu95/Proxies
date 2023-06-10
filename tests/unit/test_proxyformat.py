@@ -1,10 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytest
 
 from proxies.service.proxy import ProxyProtocol
 from proxies.models import Proxy as DB_Proxy, Health as DB_Health, Address as DB_Address
-from proxies.views import proxy_format
+from proxies.utils.format import proxy_format
 
 
 def test_proxy_format():

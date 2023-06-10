@@ -1,19 +1,16 @@
+import json
+
 import pytest
 
 from proxies.service.source.github import JetkaiProxySource, TheSpeedXProxySource, ProxyProtocol
-
 
 def test_speedx_get_proxies(monkeypatch):
     source = TheSpeedXProxySource()
 
     def fake_make_request(*args, **kwargs):
-        class MockResponce:
-            def __init__(self, text) -> None:
-                self.text = text
+        return "34.0.0.1:8080\n209.97.150.1:8080\n20.111.54.1:8080\n192.168.1.1:80"
 
-        return MockResponce("34.0.0.1:8080\n209.97.150.1:8080\n20.111.54.1:8080\n192.168.1.1:80")
-
-    monkeypatch.setattr(TheSpeedXProxySource, "make_request", fake_make_request)
+    monkeypatch.setattr("proxies.service.source.github.make_request", fake_make_request)
     monkeypatch.setattr(TheSpeedXProxySource, "PROTOCOL_LIST", [(ProxyProtocol.HTTP, "http.txt")])
 
     proxies = source.get_proxies()
@@ -34,13 +31,9 @@ def test_jetkai_get_proxies(monkeypatch):
     source = JetkaiProxySource()
 
     def fake_make_request(*args, **kwargs):
-        class MockResponce:
-            def json(self):
-                return raw_proxy_list
-
-        return MockResponce()
+        return json.dumps(raw_proxy_list)
     
-    monkeypatch.setattr(JetkaiProxySource, "make_request", fake_make_request)
+    monkeypatch.setattr("proxies.service.source.github.make_request", fake_make_request)
 
     proxies = source.get_proxies()
     assert len(proxies) == 3

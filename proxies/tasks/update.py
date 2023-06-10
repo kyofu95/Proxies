@@ -7,7 +7,7 @@ from proxies.core.scheduler import scheduler
 
 from proxies.models import Proxy as DB_Proxy
 
-from proxies.tasks.netwok_utils import is_proxy_active
+from proxies.utils.network import is_proxy_active
 
 # This constant defines number of proxies per thread worker
 CHUNK_SIZE = 10
