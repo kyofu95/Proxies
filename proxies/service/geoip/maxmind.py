@@ -23,15 +23,11 @@ class MaxmindLiteDb2Geolocation(IBaseGeolocation):
         """Get the geolocation information for the given IP address using the MaxMind GeoLite2 City database."""
 
         with geoip2.database.Reader(self.litedb2_path) as reader:
-            address = Address()
-
             try:
                 response = reader.city(proxy.ip_address)
             except geoip2.errors.AddressNotFoundError:
-                return address
+                return Address()
 
-            address.city = response.city.name
-            address.region = response.subdivisions.most_specific.name
-            address.country = response.country.name
-
-            return address
+            return Address(
+                city=response.city.name, region=response.subdivisions.most_specific.name, country=response.country.name
+            )
