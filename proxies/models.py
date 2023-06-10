@@ -83,7 +83,7 @@ class Proxy(db.Model):
         if country:
             filters.append(Address.country == country)
         if protocol:
-            filters.append(Proxy.protocol == ProxyProtocol(int(protocol)))
+            filters.append(Proxy.protocol == protocol)
 
         statement = (
             db.select(Proxy)
