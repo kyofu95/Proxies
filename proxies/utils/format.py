@@ -33,7 +33,7 @@ def timedelta_format(td_object: timedelta) -> str:
 def proxy_format(proxy: DB_Proxy) -> Dict[str, Any]:
     """Format the given proxy object into a dictionary."""
 
-    return {
+    proxy_dict = {
         "address": str(proxy.ip_address),
         "port": proxy.ip_port,
         "country": proxy.address.country,
@@ -41,3 +41,12 @@ def proxy_format(proxy: DB_Proxy) -> Dict[str, Any]:
         "response": proxy.latency // 1000,
         "last_update": timedelta_format(datetime.utcnow() - proxy.health.last_tested),
     }
+
+    if not proxy_dict["last_update"]:
+        proxy_dict["last_update"] = "now"
+
+    # overwise it will print 'None'
+    if proxy_dict["country"] is None:
+        proxy_dict["country"] = ""
+
+    return proxy_dict
