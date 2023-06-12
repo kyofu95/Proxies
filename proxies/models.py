@@ -33,6 +33,16 @@ class Proxy(db.Model):
     health = db.relationship("Health", uselist=False)
 
     @staticmethod
+    def get_all_proxies_number() -> int:
+        """Retrieve the total number of proxies in the database."""
+        db_proxy_list = (
+            db.session.execute(db.select(Proxy.ip_address, Proxy.ip_port, Proxy.protocol))
+            .columns("ip_address", "ip_port", "protocol")
+            .all()
+        )
+        return len(db_proxy_list)
+
+    @staticmethod
     def get_all_proxies_by_proxy_columns() -> List[Tuple[IPAddress, int, ProxyProtocol]]:
         """Return a list of tuples based on fields 'ip_address', 'ip_port' and 'protocol'."""
 
@@ -130,7 +140,9 @@ class Address(db.Model):
         """Return a list of distinct countries from the Address table."""
 
         db_countries = (
-            db.session.execute(db.select(Address.country).distinct().order_by(Address.country.asc()))
+            db.session.execute(
+                db.select(Address.country).where(Address.country.isnot(None)).distinct().order_by(Address.country.asc())
+            )
             .columns("country")
             .all()
         )

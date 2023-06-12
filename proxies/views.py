@@ -46,10 +46,14 @@ def index():
     form = FilterForm()
     token = generate_csrf()
 
+    num_proxies = DB_Proxy.get_all_proxies_number()
+
     db_proxies = DB_Proxy.get_newest_proxies(50)
 
     db_countries = DB_Address.get_countries()
 
     items = [proxy_format(proxy) for proxy in db_proxies]
 
-    return render_template("index.html", countries=db_countries, items=items, form=form, csrf_token=token)
+    return render_template(
+        "index.html", num_proxies=num_proxies, countries=db_countries, items=items, form=form, csrf_token=token
+    )
