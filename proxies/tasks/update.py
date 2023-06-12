@@ -38,7 +38,7 @@ def update_oldest_proxies() -> None:
 
         chunks = [db_proxies[i : i + CHUNK_SIZE] for i in range(0, len(db_proxies), CHUNK_SIZE)]
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             futures = [executor.submit(check_proxies, chunk) for chunk in chunks]
 
         checked_proxies = [proxy for future in futures for proxy in future.result()]

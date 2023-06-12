@@ -39,7 +39,7 @@ def store_proxies_in_db(cheched_proxies: List[Proxy]) -> None:
     geodb = MaxmindLiteDb2Geolocation()
 
     for proxy in cheched_proxies:
-        proxy_address = geodb.get_address(proxy.ip_address)
+        proxy_address = geodb.get_address(proxy)
 
         db_proxy = DB_Proxy(
             ip_address=str(proxy.ip_address),
@@ -94,7 +94,7 @@ def fetch_new_proxies() -> None:
 
         chunks = [list(raw_proxies)[i : i + CHUNK_SIZE] for i in range(0, len(raw_proxies), CHUNK_SIZE)]
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             futures = [executor.submit(check_proxies, chunk) for chunk in chunks]
 
             for future in futures:
