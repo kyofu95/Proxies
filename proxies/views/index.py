@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, jsonify
 from flask_wtf.csrf import validate_csrf, generate_csrf
 from wtforms.validators import ValidationError
 
-from proxies.forms import FilterForm
+from proxies.views.forms.filterform import FilterForm
 from proxies.utils.format import proxy_format
 from proxies.models.proxy import ProxyProtocol
 from proxies.models.repositories.proxy_repository import ProxyRepository
@@ -61,3 +61,10 @@ def index():
     return render_template(
         "index.html", num_proxies=num_proxies, countries=countries, items=items, form=form, csrf_token=token
     )
+
+
+@bp.route("/api", methods=["GET"])
+def api():
+    """Renders api.html template with Swagger UI."""
+
+    return render_template("api.html")
