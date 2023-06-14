@@ -10,9 +10,9 @@ from proxies.core.scheduler import init_scheduler
 
 from proxies.views import bp as index_bp
 
-from proxies.tasks.tasks import register_tasks
+from proxies.service.tasks.tasks import register_tasks
 
-if settings.ENVIRONMENT == "dev":
+if settings.ENVIRONMENT == "development":
     logging.basicConfig(
         handlers=[RotatingFileHandler("flask.log", maxBytes=100000, backupCount=10)],
         level=logging.DEBUG,
@@ -32,6 +32,12 @@ def create_app() -> Flask:
     app.config["SQLALCHEMY_DATABASE_URI"] = settings.DATABASE_URI
     app.config["SECRET_KEY"] = settings.SECRET_KEY
 
+    gunicorn_logger = logging.getLogger("gunicorn.error")
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
+
+    app.logger.info(settings.DATABASE_URI)
+
     init_database(app)
     init_scheduler(app)
     csrf = CSRFProtect(app)
@@ -40,6 +46,6 @@ def create_app() -> Flask:
 
     app.app_context().push()
 
-    # register_tasks()
+    register_tasks()
 
     return app

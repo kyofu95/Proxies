@@ -9,13 +9,14 @@ readme = "README.md"
 python = "^3.11"
 flask = "^2.3.2"
 sqlalchemy = "^2.0.15"
-psycopg2 = "^2.9.6"
 flask-sqlalchemy = "^3.0.3"
 flask-migrate = "^4.0.4"
 requests = "^2.31.0"
 geoip2 = "^4.7.0"
 flask-wtf = "^1.1.1"
 apscheduler = "^3.10.1"
+gunicorn = "^20.1.0"
+psycopg2-binary = "^2.9.6"
 
 
 [tool.poetry.group.dev.dependencies]
