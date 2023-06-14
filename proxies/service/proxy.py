@@ -3,19 +3,9 @@ from enum import Enum
 from ipaddress import IPv4Address, IPv6Address
 from typing import Optional
 
+from proxies.models.proxy import ProxyProtocol
+
 IPAddress = IPv4Address | IPv6Address
-
-
-class ProxyProtocol(Enum):
-    """
-    Enum representing different proxy protocols:
-    SOCKS4, SOCKS5, HTTP, and HTTPS (also known as SSL).
-    """
-
-    SOCKS4 = 1
-    SOCKS5 = 2
-    HTTP = 3
-    HTTPS = 4
 
 
 @dataclass(init=True, unsafe_hash=True)
