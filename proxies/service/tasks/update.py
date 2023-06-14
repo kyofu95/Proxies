@@ -4,7 +4,7 @@ import concurrent.futures
 
 from proxies.core.scheduler import scheduler
 
-from proxies.models.repositories.proxy_repository import ProxyRepository, DB_Proxy
+from proxies.models.repositories.proxy_repository import ProxyRepository, Proxy as DB_Proxy
 from proxies.models.repositories.health_repository import HealthRepository
 
 from proxies.utils.network import is_proxy_active
