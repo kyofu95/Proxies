@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Any, Dict
 
-from proxies.models import Proxy as DB_Proxy
+from proxies.models.proxy import Proxy as DB_Proxy
 
 
 def timedelta_format(td_object: timedelta) -> str:

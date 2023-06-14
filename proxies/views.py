@@ -2,12 +2,16 @@ from flask import Blueprint, render_template, request, jsonify
 from flask_wtf.csrf import validate_csrf, generate_csrf
 from wtforms.validators import ValidationError
 
-from proxies.models import Proxy as DB_Proxy, Address as DB_Address
-from proxies.service.proxy import ProxyProtocol
 from proxies.forms import FilterForm
 from proxies.utils.format import proxy_format
+from proxies.models.proxy import ProxyProtocol
+from proxies.models.repositories.proxy_repository import ProxyRepository
+from proxies.models.repositories.address_repository import AddressRepository
 
 bp = Blueprint("index", __name__, "templates/")
+
+address_rep = AddressRepository()
+proxy_rep = ProxyRepository()
 
 
 @bp.route("/filtered_data", methods=["POST"])
@@ -30,10 +34,10 @@ def filtered_data():
         if protocol:
             protocol = ProxyProtocol(int(protocol))
 
-        db_proxies = DB_Proxy.get_proxies_by_country_or_protocol(country, protocol, 50)
+        proxies = proxy_rep.get_proxies_by_country_or_protocol(country, protocol)
 
         # Convert the filtered results into a list of dictionaries
-        items = [proxy_format(proxy) for proxy in db_proxies]
+        items = [proxy_format(proxy) for proxy in proxies]
 
         return jsonify(items)
     return jsonify({"error": "Invalid input data"}), 400
@@ -46,14 +50,14 @@ def index():
     form = FilterForm()
     token = generate_csrf()
 
-    num_proxies = DB_Proxy.get_all_proxies_number()
+    num_proxies = proxy_rep.get_all_proxies_number()
 
-    db_proxies = DB_Proxy.get_newest_proxies(50)
+    proxies = proxy_rep.get_newest_proxies(50)
 
-    db_countries = DB_Address.get_countries()
+    countries = address_rep.get_countries()
 
-    items = [proxy_format(proxy) for proxy in db_proxies]
+    items = [proxy_format(proxy) for proxy in proxies]
 
     return render_template(
-        "index.html", num_proxies=num_proxies, countries=db_countries, items=items, form=form, csrf_token=token
+        "index.html", num_proxies=num_proxies, countries=countries, items=items, form=form, csrf_token=token
     )
