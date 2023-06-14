@@ -27,7 +27,7 @@ class ProxyRepository:
 
         return db_proxy
 
-    def delete(self, proxy) -> None:
+    def delete(self, proxy: Proxy) -> None:
         """Delete the given Proxy instance from the database."""
 
         db.session.delete(proxy)
@@ -80,7 +80,9 @@ class ProxyRepository:
         )
         return db_proxies
 
-    def get_proxies_by_country_or_protocol(self, country, protocol, limit: int = 50) -> List[Proxy]:
+    def get_proxies_by_country_or_protocol(
+        self, country: str | None, protocol: ProxyProtocol | None, limit: int = 50
+    ) -> List[Proxy]:
         """
         Retrieve a list of proxies that match the specified country and protocol
         ordered by nearest time they were tested and failed connections.
