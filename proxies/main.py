@@ -1,14 +1,18 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
-from flask import Flask
+from flask import Flask, Blueprint
 from flask_wtf.csrf import CSRFProtect
+from flask_restx import Api
 
 from proxies.core.config import settings
 from proxies.core.database import init_database
 from proxies.core.scheduler import init_scheduler
 
-from proxies.views import bp as index_bp
+from proxies.views.index import bp as index_bp
+# from proxies.views.api import bp as api_bp
+
+from proxies.api.proxies import ns
 
 from proxies.service.tasks.tasks import register_tasks
 
@@ -25,7 +29,13 @@ if settings.ENVIRONMENT == "development":
 
 
 def create_app() -> Flask:
+    """Application factory."""
+
     app = Flask(__name__)
+    root_blueprint = Blueprint("api", __name__, url_prefix="/api")
+    api = Api(root_blueprint, doc="/docs/")
+
+    app.register_blueprint(root_blueprint)
 
     app.logger.info("App start")
 
@@ -43,6 +53,9 @@ def create_app() -> Flask:
     csrf = CSRFProtect(app)
 
     app.register_blueprint(index_bp)
+    # app.register_blueprint(api_bp)
+
+    api.add_namespace(ns)
 
     app.app_context().push()
 
