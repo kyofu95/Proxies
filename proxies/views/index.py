@@ -63,8 +63,8 @@ def index():
     )
 
 
-@bp.route("/api", methods=["GET"])
-def api():
-    """Renders api.html template with Swagger UI."""
+# @bp.route("/api", methods=["GET"])
+# def api():
+#     """Renders api.html template with Swagger UI."""
 
-    return render_template("api.html")
+#     return render_template("api.html")
