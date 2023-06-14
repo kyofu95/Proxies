@@ -28,7 +28,12 @@ def is_proxy_active(uri: str, proxy_dict: Dict[str, str], timeout: int) -> Reque
 
     try:
         response = requests.get(uri, proxies=proxy_dict, timeout=timeout)
-    except (requests.exceptions.Timeout, requests.exceptions.ProxyError, requests.exceptions.ConnectionError):
+    except (
+        requests.exceptions.Timeout,
+        requests.exceptions.ProxyError,
+        requests.exceptions.ConnectionError,
+        requests.exceptions.ChunkedEncodingError,
+    ):
         return RequestResult(False, 0)
     except requests.exceptions.RequestException as exc:
         logging.debug("proxy checking exception", exc_info=exc)
