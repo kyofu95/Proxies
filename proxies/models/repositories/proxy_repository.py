@@ -36,11 +36,7 @@ class ProxyRepository:
     def get_all_proxies_number(self) -> int:
         """Retrieve the total number of proxies in the database."""
 
-        db_proxy_list = (
-            db.session.execute(db.select(Proxy.ip_address, Proxy.ip_port, Proxy.protocol))
-            .columns("ip_address", "ip_port", "protocol")
-            .all()
-        )
+        db_proxy_list = self.get_all_proxy_by_columns()
         return len(db_proxy_list)
 
     def get_all_proxy_by_columns(self) -> List[Tuple[IPv4Address | IPv6Address, int, ProxyProtocol]]:
