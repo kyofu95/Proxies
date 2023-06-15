@@ -2,7 +2,7 @@ import concurrent.futures
 from ipaddress import ip_address
 import time
 import logging
-from typing import List
+from typing import List, Set
 
 
 from sqlalchemy.exc import SQLAlchemyError
@@ -65,14 +65,20 @@ def store_proxies_in_db(cheched_proxies: List[Proxy]) -> None:
             logging.exception("Db exception", exc_info=exc)
 
 
+def fetch_from_all_sources() -> Set[Proxy]:
+    """Iterates over all sources and collects fresh proxies."""
+
+    raw_proxies = set()
+    for source in proxy_source_manager.get_instances():
+        raw_proxies.update(source.get_proxies())
+    return raw_proxies
+
+
 def fetch_new_proxies() -> None:
     """Fetch new proxies from available sources and store them in the database."""
 
     with scheduler.app.app_context():
-        raw_proxies = set()
-        for source in proxy_source_manager.get_instances():
-            raw_proxies.update(source.get_proxies())
-
+        raw_proxies = fetch_from_all_sources()
         if not raw_proxies:
             return
 

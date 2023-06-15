@@ -23,12 +23,17 @@ flask-restx = "^1.1.0"
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"
 black = "^23.3.0"
+pytest-cov = "^4.1.0"
+pytest-dotenv = "^0.5.2"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
+env_files = [
+  ".test.env",
+]
 pythonpath = [
   "proxies",
 ]

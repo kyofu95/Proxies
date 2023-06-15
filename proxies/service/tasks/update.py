@@ -55,12 +55,12 @@ def update_oldest_proxies() -> None:
 
             proxy.health.last_tested = datetime.utcnow()
 
-            if proxy.health.failed_connections > 10 or (
+            if proxy.health.failed_connections >= 10 or (
                 proxy.health.failed_connections == proxy.health.connections and proxy.health.failed_connections > 5
             ):
                 # delete proxy record
-                health_rep.delete(proxy.health)
                 proxy_rep.delete(proxy)
+                health_rep.delete(proxy.health)
                 continue
 
             # update proxy database record
