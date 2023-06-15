@@ -1,10 +1,9 @@
 import logging
+from ipaddress import IPv4Address, IPv6Address
 
 import geoip2.database
 
-from proxies.service.address import Address
-from proxies.service.proxy import Proxy
-from proxies.service.geoip.base import IBaseGeolocation
+from proxies.service.geoip.base import IBaseGeolocation, Address
 
 from proxies.core.config import settings
 
@@ -31,14 +30,13 @@ class MaxmindLiteDb2Geolocation(IBaseGeolocation):
             logging.exception("geoip2 reader failed", exc_info=exc)
             raise exc
 
-
-    def get_address(self, proxy: Proxy) -> Address:
+    def get_address(self, ip_address: str | IPv4Address | IPv6Address) -> Address:
         """Get the geolocation information for the given IP address using the MaxMind GeoLite2 City database."""
 
         try:
-            response = self.db_reader.city(proxy.ip_address)
+            response = self.db_reader.city(ip_address)
         except geoip2.errors.AddressNotFoundError:
-            return Address()
+            return Address(None, None, None)
 
         return Address(
             city=response.city.name, region=response.subdivisions.most_specific.name, country=response.country.name
