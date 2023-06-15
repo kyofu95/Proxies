@@ -1,5 +1,4 @@
-import argparse
-from enum import Enum
+from ipaddress import IPv4Address, IPv6Address
 
 from flask_restx import fields, Namespace, Resource, reqparse
 
@@ -14,7 +13,11 @@ proxy_rep = ProxyRepository()
 
 
 class IpAddressField(fields.Raw):
-    def format(self, value):
+    """Custom flask-restx Field for ipaddress package types."""
+
+    def format(self, value: str | IPv4Address | IPv6Address) -> str:
+        """Convert value into string."""
+
         return str(value)
 
 
@@ -40,15 +43,23 @@ parser.add_argument("limit", type=int, default=20, location="args", help="Limit 
 
 @ns.route("/proxies")
 class Proxy(Resource):
+    """Router class for Proxy."""
+
     @ns.expect(parser)
     @ns.doc(responses={400: "Bad request"})
     @ns.marshal_list_with(proxy_scheme, code=200)
     def get(self):
+        """Returns list of proxies."""
+
         args = parser.parse_args()
+
         country = args["country"]
+
         protocol = None
         if args["protocol"]:
             protocol = ProxyProtocol[args["protocol"]]
+
         limit = args["limit"]
+
         proxies = proxy_rep.get_proxies_by_country_or_protocol(country, protocol, limit)
         return proxies
