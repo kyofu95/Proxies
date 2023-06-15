@@ -3,7 +3,9 @@ from datetime import datetime, timedelta
 import pytest
 
 from proxies.service.proxy import ProxyProtocol
-from proxies.models import Proxy as DB_Proxy, Health as DB_Health, Address as DB_Address
+from proxies.models.proxy import Proxy as DB_Proxy
+from proxies.models.health import Health as DB_Health
+from proxies.models.address import Address as DB_Address
 from proxies.utils.format import proxy_format
 
 
@@ -26,6 +28,7 @@ def test_proxy_format():
     }
     assert proxy_format(proxy) == expected_output
 
+
 def test_proxy_format_country_none():
     proxy = DB_Proxy(
         ip_address="192.168.0.1",
@@ -44,6 +47,7 @@ def test_proxy_format_country_none():
         "last_update": "2 minutes",
     }
     assert proxy_format(proxy) == expected_output
+
 
 def test_proxy_format_now():
     proxy = DB_Proxy(
