@@ -10,19 +10,24 @@ from proxies.core.database import init_database
 from proxies.core.scheduler import init_scheduler
 
 from proxies.views.index import bp as index_bp
-# from proxies.views.api import bp as api_bp
 
 from proxies.api.proxies import ns
 
 from proxies.service.tasks.tasks import register_tasks
 
-if settings.ENVIRONMENT == "development":
-    logging.basicConfig(
-        handlers=[RotatingFileHandler("flask.log", maxBytes=100000, backupCount=10)],
-        level=logging.DEBUG,
-        format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
-        datefmt="%Y-%m-%dT%H:%M:%S",
-    )
+
+def setup_logging(app: Flask):
+    if settings.GUNICORN:
+        gunicorn_logger = logging.getLogger("gunicorn.error")
+        app.logger.handlers = gunicorn_logger.handlers
+        app.logger.setLevel(gunicorn_logger.level)
+    else:
+        logging.basicConfig(
+            handlers=[RotatingFileHandler("flask.log", maxBytes=100000, backupCount=10)],
+            level=logging.DEBUG,
+            format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
+            datefmt="%Y-%m-%dT%H:%M:%S",
+        )
 
     # this line removes logging about EVERY proxy check
     logging.getLogger("urllib3").setLevel(logging.WARNING)
@@ -35,6 +40,8 @@ def create_app() -> Flask:
     root_blueprint = Blueprint("api", __name__, url_prefix="/api")
     api = Api(root_blueprint, doc="/docs/")
 
+    setup_logging(app)
+
     app.register_blueprint(root_blueprint)
 
     app.logger.info("App start")
@@ -42,23 +49,17 @@ def create_app() -> Flask:
     app.config["SQLALCHEMY_DATABASE_URI"] = settings.DATABASE_URI
     app.config["SECRET_KEY"] = settings.SECRET_KEY
 
-    gunicorn_logger = logging.getLogger("gunicorn.error")
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
-
-    app.logger.info(settings.DATABASE_URI)
-
     init_database(app)
     init_scheduler(app)
     csrf = CSRFProtect(app)
 
     app.register_blueprint(index_bp)
-    # app.register_blueprint(api_bp)
 
     api.add_namespace(ns)
 
     app.app_context().push()
 
-    register_tasks()
+    if settings.ENVIRONMENT != "testing":
+        register_tasks()
 
     return app

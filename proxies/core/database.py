@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy.exc import SQLAlchemyError
 
+from proxies.core.config import settings
+
 db = SQLAlchemy()
 migrate = Migrate()
 
@@ -16,6 +18,10 @@ def init_database(app: Flask):
     migrate.init_app(app, db)
 
     with app.app_context():
+
+        if settings.ENVIRONMENT == "testing":
+            db.create_all()
+
         with db.engine.begin() as conn:
             try:
                 result = conn.exec_driver_sql("select 1;")
