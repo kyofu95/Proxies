@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Ryaaa</h1>
+<br>
 
 <div class="container">
     <p>{{ num_proxies }} proxies in database</p>
@@ -9,14 +9,14 @@
 
 <form method="POST" action="/" id="filter-form">
     <div class="container">
-        <p>Country</p>
+        <label for="country-select">Country</label>
         <select class="form-select" id="country-select">
             <option value="" selected disabled hidden>Select country</option>
             {% for country in countries %}
             <option value="{{country}}">{{country}}</option>
             {% endfor %}
         </select>
-        <p>Protocol</p>
+        <label for="protocol-select">Protocol</label>
         <select class="form-select" id="protocol-select">
             <option value="" selected disabled hidden>Select protocol</option>
             <option value="1">SOCKS4</option>
