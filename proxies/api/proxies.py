@@ -55,9 +55,9 @@ class Proxy(Resource):
 
         country = args["country"]
 
-        protocol = None
-        if args["protocol"]:
-            protocol = ProxyProtocol[args["protocol"]]
+        protocol = args["protocol"]
+        if protocol:
+            protocol = ProxyProtocol[protocol]
 
         limit = args["limit"]
 
