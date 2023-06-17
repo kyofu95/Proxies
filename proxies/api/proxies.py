@@ -54,6 +54,8 @@ class Proxy(Resource):
         args = parser.parse_args()
 
         country = args["country"]
+        if country:
+            country = country.capitalize()
 
         protocol = args["protocol"]
         if protocol:
