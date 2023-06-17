@@ -15,10 +15,10 @@ def test_speedx_get_proxies(monkeypatch):
 
     proxies = source.get_proxies()
     assert len(proxies) == 3
-    assert str(proxies[0].ip_address) == "34.0.0.1"
-    assert str(proxies[0].ip_port) == "8080"
-    assert str(proxies[2].ip_address) == "20.111.54.1"
-    assert str(proxies[2].ip_port) == "8080"
+    assert str(proxies[0].address) == "34.0.0.1"
+    assert str(proxies[0].port) == "8080"
+    assert str(proxies[2].address) == "20.111.54.1"
+    assert str(proxies[2].port) == "8080"
 
 
 raw_proxy_list = [
@@ -37,7 +37,7 @@ def test_jetkai_get_proxies(monkeypatch):
 
     proxies = source.get_proxies()
     assert len(proxies) == 3
-    assert str(proxies[0].ip_address) == "34.0.0.1"
-    assert str(proxies[0].ip_port) == "80"
-    assert str(proxies[2].ip_address) == "34.0.0.2"
-    assert str(proxies[2].ip_port) == "8080"
+    assert str(proxies[0].address) == "34.0.0.1"
+    assert str(proxies[0].port) == "80"
+    assert str(proxies[2].address) == "34.0.0.2"
+    assert str(proxies[2].port) == "8080"

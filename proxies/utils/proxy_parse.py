@@ -1,9 +1,10 @@
 from ipaddress import ip_address
+from proxies.service.source.base import UncheckedProxyTuple
 
-from proxies.service.proxy import Proxy, ProxyProtocol
+from proxies.models.proxy import ProxyProtocol
 
 
-def parse_proxy(ip_adress: str, ip_port: str, protocol: ProxyProtocol | str) -> Proxy | None:
+def parse_proxy(ip_adress: str, ip_port: str, protocol: ProxyProtocol | str) -> UncheckedProxyTuple | None:
     """Parse and validate a proxy address."""
 
     # Convert and (partially) validate address and port
@@ -33,4 +34,4 @@ def parse_proxy(ip_adress: str, ip_port: str, protocol: ProxyProtocol | str) -> 
     else:
         return None
 
-    return Proxy(address, port, protocol)
+    return UncheckedProxyTuple(address, port, protocol)

@@ -2,8 +2,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from proxies.service.proxy import ProxyProtocol
-from proxies.models.proxy import Proxy as DB_Proxy
+from proxies.models.proxy import Proxy as DB_Proxy, ProxyProtocol
 from proxies.models.health import Health as DB_Health
 from proxies.models.address import Address as DB_Address
 from proxies.utils.format import proxy_format

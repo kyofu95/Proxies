@@ -7,6 +7,9 @@ from proxies.models.health import Health
 from proxies.models.address import Address
 
 
+IPAddress = IPv4Address | IPv6Address
+
+
 class ProxyRepository:
     """A class that provides methods to interact with the Proxy table in the database."""
 
@@ -39,7 +42,7 @@ class ProxyRepository:
         db_proxy_list = self.get_all_proxy_by_columns()
         return len(db_proxy_list)
 
-    def get_all_proxy_by_columns(self) -> List[Tuple[IPv4Address | IPv6Address, int, ProxyProtocol]]:
+    def get_all_proxy_by_columns(self) -> List[Tuple[IPAddress, int, ProxyProtocol]]:
         """Return a list of tuples based on fields 'ip_address', 'ip_port' and 'protocol'."""
 
         db_proxy_list = (

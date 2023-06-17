@@ -1,8 +1,7 @@
 from typing import List
 import json
 
-from proxies.service.proxy import Proxy, ProxyProtocol
-from proxies.service.source.base import IBaseProxySource
+from proxies.service.source.base import IBaseProxySource, UncheckedProxyTuple, ProxyProtocol
 from proxies.utils.proxy_parse import parse_proxy
 from proxies.utils.network import make_request
 
@@ -20,7 +19,7 @@ class TheSpeedXProxySource(IBaseProxySource):
         (ProxyProtocol.SOCKS5, "socks5.txt"),
     ]
 
-    def get_proxies(self) -> List[Proxy] | None:
+    def get_proxies(self) -> List[UncheckedProxyTuple] | None:
         """Get a list of proxies from the source."""
 
         proxies = []
@@ -51,7 +50,7 @@ class JetkaiProxySource(IBaseProxySource):
 
     base_url = "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/json/proxies-basic.json"
 
-    def get_proxies(self) -> List[Proxy] | None:
+    def get_proxies(self) -> List[UncheckedProxyTuple] | None:
         """Get a list of proxies from the source."""
 
         proxies = []
