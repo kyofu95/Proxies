@@ -4,7 +4,7 @@ import os
 class Settings:
     """This class represents the settings for the application."""
 
-    ENVIRONMENT: str = os.environ.get("ENVIRONMENT", "dev")
+    ENVIRONMENT: str = os.environ.get("ENVIRONMENT", "development")
 
     GUNICORN: bool = int(os.environ.get("GUNICORN", 0))
 
