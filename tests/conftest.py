@@ -10,7 +10,8 @@ from proxies.models.health import Health
 
 @pytest.fixture(scope="session")
 def setup_flask():
-    os.environ["SQLALCHEMY_DATABASE_URI"] = "testing"
+    assert os.environ["ENVIRONMENT"] == "testing"
+
     app = create_app()
     db.create_all()
 

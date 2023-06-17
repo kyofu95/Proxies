@@ -32,7 +32,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 env_files = [
-  ".test.env",
+  "test.env",
 ]
 pythonpath = [
   "proxies",
