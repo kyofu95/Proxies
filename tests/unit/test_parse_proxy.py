@@ -1,6 +1,6 @@
 from ipaddress import ip_address
 import pytest
-from proxies.service.source.utils import parse_proxy, Proxy, ProxyProtocol
+from proxies.utils.proxy_parse import parse_proxy, Proxy, ProxyProtocol
 
 
 @pytest.mark.parametrize(
@@ -17,6 +17,9 @@ from proxies.service.source.utils import parse_proxy, Proxy, ProxyProtocol
         ("192.168.1.1", "0", ProxyProtocol.HTTP, None),
         ("192.168.1.1", "65536", ProxyProtocol.HTTP, None),
         ("0.0.0.0", "8080", ProxyProtocol.HTTP, None),
+        ("34.0.0.1", "8080", "HTTP", Proxy(ip_address("34.0.0.1"), 8080, ProxyProtocol.HTTP)),
+        ("34.0.0.1", "8080", "SOCKS5", Proxy(ip_address("34.0.0.1"), 8080, ProxyProtocol.SOCKS5)),
+        ("34.0.0.1", "8080", "TOR", None),
     ],
 )
 def test_parse_proxy(ip_adress, ip_port, protocol, expected_output):

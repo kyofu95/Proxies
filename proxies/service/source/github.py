@@ -3,7 +3,7 @@ import json
 
 from proxies.service.proxy import Proxy, ProxyProtocol
 from proxies.service.source.base import IBaseProxySource
-from proxies.service.source.utils import parse_proxy
+from proxies.utils.proxy_parse import parse_proxy
 from proxies.utils.network import make_request
 
 

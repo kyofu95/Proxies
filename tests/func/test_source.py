@@ -4,7 +4,7 @@ from flask import Flask
 from proxies.core.database import db
 
 from proxies.service.tasks.source import fetch_new_proxies, Proxy
-from proxies.service.source.utils import parse_proxy, ProxyProtocol
+from proxies.utils.proxy_parse import parse_proxy, ProxyProtocol
 
 
 class MockResult:
