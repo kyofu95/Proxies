@@ -48,6 +48,7 @@ def create_app() -> Flask:
 
     app.config["SQLALCHEMY_DATABASE_URI"] = settings.DATABASE_URI
     app.config["SECRET_KEY"] = settings.SECRET_KEY
+    app.config["RESTX_MASK_SWAGGER"] = False
 
     init_database(app)
     init_scheduler(app)
