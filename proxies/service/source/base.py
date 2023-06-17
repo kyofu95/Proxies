@@ -4,10 +4,6 @@ from typing import List
 from proxies.service.proxy import Proxy
 
 
-class ProxySourceError(Exception):
-    pass
-
-
 class IBaseProxySource(ABC):
     """An abstract base class for proxy sources, providing a get_proxies method to retrieve proxies."""
 
