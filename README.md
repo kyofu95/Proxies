@@ -1,0 +1,2 @@
+## Overview
+This project is a Python-based web application built with Flask. Its goal is to scrape proxies from the internet and display them on a website. Additionally, the project allows users to grab proxies through a REST API.
