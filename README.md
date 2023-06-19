@@ -19,3 +19,4 @@ check localhost:80
 ```
 
 For local dev and tests you will need GeoLite2-City database. Download it from MaxMind site, and set its path to MAXDBLITE_PATH variable in .env file
+For tests you will also need to make test.env based on test.env.sample.
