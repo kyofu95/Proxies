@@ -11,6 +11,7 @@ This project is a Python-based web application built with Flask. Its goal is to 
 ```bash
 git clone https://github.com/kyofu95/proxies
 cd proxies
+poetry install
 cp .env.sample .env
 Edit your .env file
 docker-compose -f docker-compose.yml up
