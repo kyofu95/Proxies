@@ -37,6 +37,15 @@ def create_app() -> Flask:
     """Application factory."""
 
     app = Flask(__name__)
+
+    app.config["FLASK_ENV"] = settings.ENVIRONMENT
+    app.config["SQLALCHEMY_DATABASE_URI"] = settings.DATABASE_URI
+    app.config["SECRET_KEY"] = settings.SECRET_KEY
+    app.config["RESTX_MASK_SWAGGER"] = False
+
+    if settings.ENVIRONMENT == "testing":
+        app.config["TESTING"] = True
+
     root_blueprint = Blueprint("api", __name__, url_prefix="/api")
     api = Api(root_blueprint, doc="/docs/")
 
@@ -45,10 +54,6 @@ def create_app() -> Flask:
     app.register_blueprint(root_blueprint)
 
     app.logger.info("App start")
-
-    app.config["SQLALCHEMY_DATABASE_URI"] = settings.DATABASE_URI
-    app.config["SECRET_KEY"] = settings.SECRET_KEY
-    app.config["RESTX_MASK_SWAGGER"] = False
 
     init_database(app)
     init_scheduler(app)
