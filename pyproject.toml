@@ -22,9 +22,9 @@ flask-restx = "^1.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"
-black = "^23.3.0"
 pytest-cov = "^4.1.0"
 pytest-dotenv = "^0.5.2"
+ruff = "^0.9.7"
 
 [build-system]
 requires = ["poetry-core"]
@@ -41,5 +41,40 @@ testpaths = [
   "tests",
 ]
 
-[tool.black]
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
 line-length = 120
+indent-width = 4
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D100", "D404"]
